@@ -1,5 +1,6 @@
 package com.akshayan.forumbackend.service;
 
+import com.akshayan.forumbackend.Exception.ForumException;
 import com.akshayan.forumbackend.dto.RegisterRequestDto;
 import com.akshayan.forumbackend.model.ForumUser;
 import com.akshayan.forumbackend.model.NotificationEmail;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -47,5 +49,19 @@ public class AuthService {
         verificationToken.setForumUser(forumUser);
         verificationTokenRepository.save(verificationToken);
         return token;
+    }
+
+    public void verifyAccount(String token) {
+        Optional<VerificationToken> verificationToken= verificationTokenRepository.findByToken(token);
+        verificationToken.orElseThrow((() -> new ForumException("Invalid Token")));
+        fetchUserAndEnable(verificationToken.get());
+    }
+
+    private void fetchUserAndEnable(VerificationToken verificationToken) {
+        String username = verificationToken.getForumUser().getUsername();
+        Optional<ForumUser> forumUser = forumUserRepository.findByUsername(username);
+        forumUser.orElseThrow((() -> new ForumException("User not found with name: " + username)));
+        forumUser.get().setEnabled(true);
+        forumUserRepository.save(forumUser.get());
     }
 }
