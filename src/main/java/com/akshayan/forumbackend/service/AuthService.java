@@ -1,0 +1,51 @@
+package com.akshayan.forumbackend.service;
+
+import com.akshayan.forumbackend.dto.RegisterRequestDto;
+import com.akshayan.forumbackend.model.ForumUser;
+import com.akshayan.forumbackend.model.NotificationEmail;
+import com.akshayan.forumbackend.model.VerificationToken;
+import com.akshayan.forumbackend.repository.ForumUserRepository;
+import com.akshayan.forumbackend.repository.VerificationTokenRepository;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.util.UUID;
+
+@Service
+@AllArgsConstructor
+public class AuthService {
+    private final PasswordEncoder passwordEncoder;
+    private final ForumUserRepository forumUserRepository;
+    private final VerificationTokenRepository verificationTokenRepository;
+    private final MailService mailService;
+
+    @Transactional
+    public void register(RegisterRequestDto registerRequestDto) {
+        ForumUser forumUser = new ForumUser();
+        forumUser.setUsername(registerRequestDto.getUsername());
+        forumUser.setEmail(registerRequestDto.getEmail());
+        forumUser.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
+        forumUser.setCreated(Instant.now());
+        forumUser.setEnabled(false);
+        forumUserRepository.save(forumUser);
+
+        String token = generateVerificationToken(forumUser);
+        mailService.sendMail(new NotificationEmail("Please Activate your Forum Account",forumUser.getEmail(),"Thank you for Signing up with us. Please click on the link below to activate your account.\n" +
+                "http://localhost:8080/api/auth/accountVerification/" + token));
+
+    }
+
+    private String generateVerificationToken(ForumUser forumUser) {
+        String token = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken();
+        verificationToken.setToken(token);
+        verificationToken.setForumUser(forumUser);
+        verificationTokenRepository.save(verificationToken);
+        return token;
+    }
+}
