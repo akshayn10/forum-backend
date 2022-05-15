@@ -1,15 +1,22 @@
 package com.akshayan.forumbackend.service;
 
 import com.akshayan.forumbackend.Exception.ForumException;
+import com.akshayan.forumbackend.dto.AuthenticationResponse;
+import com.akshayan.forumbackend.dto.LoginRequest;
 import com.akshayan.forumbackend.dto.RegisterRequestDto;
 import com.akshayan.forumbackend.model.ForumUser;
 import com.akshayan.forumbackend.model.NotificationEmail;
 import com.akshayan.forumbackend.model.VerificationToken;
 import com.akshayan.forumbackend.repository.ForumUserRepository;
 import com.akshayan.forumbackend.repository.VerificationTokenRepository;
+import com.akshayan.forumbackend.security.JwtProvider;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +32,8 @@ public class AuthService {
     private final ForumUserRepository forumUserRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final MailService mailService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
 
     @Transactional
     public void register(RegisterRequestDto registerRequestDto) {
@@ -64,4 +73,13 @@ public class AuthService {
         forumUser.get().setEnabled(true);
         forumUserRepository.save(forumUser.get());
     }
+
+    public AuthenticationResponse login(LoginRequest loginRequest) {
+        Authentication authenticate=  authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication((Authentication) authenticate);
+        String token= jwtProvider.generateToken(authenticate);
+        return new AuthenticationResponse(token,loginRequest.getUsername());
+    }
+
 }
