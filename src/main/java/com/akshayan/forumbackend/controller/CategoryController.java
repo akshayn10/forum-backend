@@ -26,4 +26,8 @@ public class CategoryController {
     public ResponseEntity<List<CategoryDto>> getAllCategory(){
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.getAllCategory());
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoryById(id));
+    }
 }

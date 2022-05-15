@@ -1,7 +1,9 @@
 package com.akshayan.forumbackend.service;
 
+import com.akshayan.forumbackend.Exception.ForumException;
 import com.akshayan.forumbackend.dto.CategoryDto;
 import com.akshayan.forumbackend.dto.CategoryRequestDto;
+import com.akshayan.forumbackend.mapper.CategoryMapper;
 import com.akshayan.forumbackend.model.Category;
 import com.akshayan.forumbackend.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     @Transactional
     public CategoryRequestDto createCategory(CategoryRequestDto categoryRequestDto) {
@@ -29,7 +32,7 @@ public class CategoryService {
 
     private Category mapCategoryRequestDtoToCategory(CategoryRequestDto categoryRequestDto) {
         return Category.builder()
-                .name(categoryRequestDto.getCategoryName())
+                .name(categoryRequestDto.getName())
                 .description(categoryRequestDto.getDescription())
                 .build();
     }
@@ -38,17 +41,12 @@ public class CategoryService {
     public List<CategoryDto> getAllCategory() {
        return   categoryRepository.findAll()
                 .stream()
-                .map(this::mapCategoryToCategoryDto)
+                .map(categoryMapper::mapCategoryToDto)
                 .collect(Collectors.toList());
     }
 
-    private CategoryDto mapCategoryToCategoryDto(Category category) {
-        return CategoryDto.builder()
-                .id(category.getId())
-                .categoryName(category.getName())
-                .description(category.getDescription())
-                .numberOfPosts(category.getPosts().size())
-                .build();
-
+    public CategoryDto getCategoryById(Long id) {
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new ForumException("Category not found"));
+        return categoryMapper.mapCategoryToDto(category);
     }
 }

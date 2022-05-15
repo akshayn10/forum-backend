@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CategoryRequestDto {
     private Long id;
-    private String categoryName;
+    private String name;
     private String description;
 }

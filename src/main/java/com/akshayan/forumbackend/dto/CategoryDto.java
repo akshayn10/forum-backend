@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CategoryDto {
     private Long id;
-    private String categoryName;
+    private String name;
     private String description;
     private Integer numberOfPosts;
 }
