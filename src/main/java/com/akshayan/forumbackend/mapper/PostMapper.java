@@ -10,6 +10,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.Date;
 import java.util.Optional;
 
 import static com.akshayan.forumbackend.model.VoteType.DOWNVOTE;
@@ -48,7 +49,7 @@ public abstract class PostMapper {
     }
 
     String getDuration(Post post) {
-        return post.getCreatedDate().toString();
+        return Date.from(post.getCreatedDate()).toString();
     }
 
     boolean isPostUpVoted(Post post) {
