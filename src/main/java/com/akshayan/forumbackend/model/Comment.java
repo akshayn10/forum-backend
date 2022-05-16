@@ -1,8 +1,6 @@
 package com.akshayan.forumbackend.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -14,6 +12,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Entity
 public class Comment {
     @Id
