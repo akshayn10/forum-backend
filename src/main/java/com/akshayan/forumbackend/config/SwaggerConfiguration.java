@@ -28,9 +28,9 @@
 //        return new ApiInfoBuilder()
 //                .title("Forum API")
 //                .version("1.0")
-//                .description("API for Reddit Clone Application")
-//                .contact(new Contact("Akshayan", "hi.com", "xyz@email.com"))
-//                .license("Apache 2.0")
+//                .description("API for Forum Application")
+//                .contact(new Contact("Akshayan", "@.com", "thiruakshayan98@gmail.com"))
+//                .license("None")
 //                .build();
 //    }
 //}

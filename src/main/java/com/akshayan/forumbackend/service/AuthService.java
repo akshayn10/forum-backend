@@ -1,6 +1,7 @@
 package com.akshayan.forumbackend.service;
 
 import com.akshayan.forumbackend.Exception.ForumException;
+import com.akshayan.forumbackend.config.AppConfig;
 import com.akshayan.forumbackend.dto.AuthenticationResponse;
 import com.akshayan.forumbackend.dto.LoginRequest;
 import com.akshayan.forumbackend.dto.RefreshTokenRequest;
@@ -39,6 +40,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
+    private final AppConfig appConfig;
 
     @Transactional
     public void register(RegisterRequestDto registerRequestDto) {
@@ -52,7 +54,8 @@ public class AuthService {
 
         String token = generateVerificationToken(forumUser);
         mailService.sendMail(new NotificationEmail("Please Activate your Forum Account",forumUser.getEmail(),"Thank you for Signing up with us. Please click on the link below to activate your account.\n" +
-                "http://localhost:8080/api/auth/accountVerification/" + token));
+//                appConfig.getUrl()+"api/auth/accountVerification/" + token));
+        "http://localhost:8080/api/auth/accountVerification/" + token));
 
     }
 

@@ -58,18 +58,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeHttpRequests(authorize -> authorize
                         .antMatchers("/api/auth/**")
                         .permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/category")
+                        .antMatchers( "/api/category")
                         .permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/posts/")
+                        .antMatchers( "/api/category/**")
                         .permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/posts/**")
+                        .antMatchers( "/api/posts")
                         .permitAll()
-                        .antMatchers("/v2/api-docs",
-                                "/configuration/ui",
-                                "/swagger-resources/**",
-                                "/configuration/security",
-                                "/swagger-ui.html",
-                                "/webjars/**")
+                        .antMatchers("/api/posts/**")
+                        .permitAll()
+                        .antMatchers("/api/comments/")
+                        .permitAll()
+                        .antMatchers("/api/comments/**")
+                        .permitAll()
+                        .antMatchers("/api/votes")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
